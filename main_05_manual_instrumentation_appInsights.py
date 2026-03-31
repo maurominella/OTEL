@@ -26,12 +26,17 @@ roll_counter = meter.create_counter(
 def roll():
     result = randint(-2, 2)
 
+    if result == 0: # 20% chance of error
+        result = 10/0
+    else:
+        result = randint(10000, 10010)
+
     # metrics
-    roll_counter.add(1, {"roll.value": 10/result})
+    roll_counter.add(1, {"roll.value": result})
 
     # traces
     with tracer.start_as_current_span("roll") as rollspan:
-        rollspan.set_attribute("roll.value", 10/result)
+        rollspan.set_attribute("roll.value", result)
 
     return result
 
